@@ -1,7 +1,5 @@
 package lox;
 
-import java.io.IOException;
-
 class AstPrinter implements Expr.Visitor<String> {
     String print(Expr expr) {
         return expr.accept(this);
