@@ -5,7 +5,8 @@ In this repo I'm learning about compilers by reading [Crafting Interpreters](htt
 ## Grammar
 
 ```
-expression  -> equality ;
+expression  -> comma ;
+comma       -> equality ( "," equality )* ;
 equality    -> comparison ( ( "!=" | "==" ) comparison )* ;
 comparison  -> term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
 term        -> factor ( ( "-" | "+" ) factor )* ;
