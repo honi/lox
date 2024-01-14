@@ -8,7 +8,6 @@ def define_ast(output_dir, base_name, types):
     output_file = path.join(output_dir, base_name + ".java")
     with open(output_file, "w") as f:
         f.write("package lox;\n\n")
-        f.write("import java.util.List;\n\n")
         f.write(f"abstract class {base_name} {{\n")
 
         f.write("    abstract <R> R accept(Visitor<R> visitor);\n\n");
