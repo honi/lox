@@ -46,28 +46,28 @@ class Interpreter implements Expr.Visitor<Object> {
             case EQUAL_EQUAL:
                 return isEqual(left, right);
             case GREATER:
-                checkNumberOperands(expr.operator, left, right);
-                return (double)left > (double)right;
+                checkNumberOrStringOperands(expr.operator, left, right);
+                if (areDoubles(left, right)) return (double)left > (double)right;
+                if (areStrings(left, right)) return ((String)left).compareTo((String)right) > 0;
             case GREATER_EQUAL:
-                checkNumberOperands(expr.operator, left, right);
-                return (double)left >= (double)right;
+                checkNumberOrStringOperands(expr.operator, left, right);
+                if (areDoubles(left, right)) return (double)left >= (double)right;
+                if (areStrings(left, right)) return ((String)left).compareTo((String)right) >= 0;
             case LESS:
-                checkNumberOperands(expr.operator, left, right);
-                return (double)left < (double)right;
+                checkNumberOrStringOperands(expr.operator, left, right);
+                if (areDoubles(left, right)) return (double)left < (double)right;
+                if (areStrings(left, right)) return ((String)left).compareTo((String)right) < 0;
             case LESS_EQUAL:
-                checkNumberOperands(expr.operator, left, right);
-                return (double)left <= (double)right;
+                checkNumberOrStringOperands(expr.operator, left, right);
+                if (areDoubles(left, right)) return (double)left <= (double)right;
+                if (areStrings(left, right)) return ((String)left).compareTo((String)right) <= 0;
             case MINUS:
                 checkNumberOperands(expr.operator, left, right);
                 return (double)left - (double)right;
             case PLUS:
-                if (left instanceof Double && right instanceof Double) {
-                    return (double)left + (double)right;
-                }
-                if (left instanceof String && right instanceof String) {
-                    return (String)left + (String)right;
-                }
-                throw new RuntimeError(expr.operator, "Operands must be two numbers or two strings.");
+                checkNumberOrStringOperands(expr.operator, left, right);
+                if (areDoubles(left, right)) return (double)left + (double)right;
+                if (areStrings(left, right)) return (String)left + (String)right;
             case SLASH:
                 checkNumberOperands(expr.operator, left, right);
                 return (double)left / (double)right;
@@ -95,6 +95,14 @@ class Interpreter implements Expr.Visitor<Object> {
         return a.equals(b);
     }
 
+    private boolean areDoubles(Object a, Object b) {
+        return a instanceof Double && b instanceof Double;
+    }
+
+    private boolean areStrings(Object a, Object b) {
+        return a instanceof String && b instanceof String;
+    }
+
     private String stringify(Object object) {
         if (object == null) return "nil";
 
@@ -117,5 +125,11 @@ class Interpreter implements Expr.Visitor<Object> {
     private void checkNumberOperands(Token operator, Object left, Object right) {
         if (left instanceof Double && right instanceof Double) return;
         throw new RuntimeError(operator, "Operands must be numbers.");
+    }
+
+    private void checkNumberOrStringOperands(Token operator, Object left, Object right) {
+        if (left instanceof Double && right instanceof Double) return;
+        if (left instanceof String && right instanceof String) return;
+        throw new RuntimeError(operator, "Operands must be two numbers or two strings.");
     }
 }
